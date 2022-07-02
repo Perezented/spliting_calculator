@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, InputGroup, Table } from "react-bootstrap";
@@ -10,6 +10,7 @@ import {
 	ReactCompareSlider,
 	ReactCompareSliderImage
 } from "react-compare-slider";
+import Typed from "typed.js";
 
 function App() {
 	const [total, setTotal] = useState(0);
@@ -20,6 +21,37 @@ function App() {
 	};
 	const [totalAdded, setTotalAdded] = useState(brokenPercentages);
 	const [totalAddedRounded, setTotalAddedRounded] = useState(0);
+
+  	// Create reference to store the DOM element containing the animation
+	const el = useRef(null);
+  // Create reference to store the Typed instance itself
+	const typed = useRef(null);
+  useEffect(() => {
+    const options = {
+    	strings: [
+        "Alysa's Calculator",
+        "Numbers coming right up!",
+        "Some amount there, some amount here",
+        "Whoooaa decimals",
+        "Alysa's Calculator",
+      ],
+      shuffle: true,
+      typeSpeed: 50,
+      backSpeed: 50,
+      loopCount: 2,
+      cursorChar: "",
+      backDelay: 30000
+    };
+
+    // elRef refers to the <span> rendered below
+    typed.current = new Typed(el.current, options);
+
+    return () => {
+      // Make sure to destroy Typed instance during cleanup
+      // to prevent memory leaks
+      typed.current.destroy();
+    }
+  }, [])
 
 	useEffect(() => {
 		setTotal(0);
@@ -75,7 +107,8 @@ function App() {
 				<Container>
 					<Row>
 						<h1>
-							<FontAwesomeIcon icon={faCalculator} /> Alysa's Calculator
+							<FontAwesomeIcon icon={faCalculator} />{" "}
+              <span style={{ whiteSpace: 'pre' }} ref={el} />
 						</h1>
 					</Row>
 				</Container>
