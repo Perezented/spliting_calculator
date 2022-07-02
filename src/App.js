@@ -2,18 +2,11 @@ import { useState, useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {
-	Container,
-	Row,
-	Col,
-	InputGroup,
-	FormControl,
-	Table
-} from "react-bootstrap";
+import { Container, Row, Col, InputGroup, Table } from "react-bootstrap";
 
 function App() {
 	const [total, setTotal] = useState(0);
-  const brokenPercentages = {
+	const brokenPercentages = {
 		tenPercent: 0,
 		thirtyPercent: 0,
 		fiftyPercent: 0
@@ -21,41 +14,43 @@ function App() {
 	const [totalAdded, setTotalAdded] = useState(brokenPercentages);
 	const [totalAddedRounded, setTotalAddedRounded] = useState(0);
 
-  useEffect(() => {
-    setTotal(0)
-    setTotalAdded(brokenPercentages)
-  }, [])
+	useEffect(() => {
+		setTotal(0);
+		setTotalAdded(brokenPercentages);
+	}, []);
 
 	useEffect(() => {
 		brokenPercentages.tenPercent = total * 0.1;
 		brokenPercentages.thirtyPercent = total * 0.3;
 		brokenPercentages.fiftyPercent = total * 0.5;
-    setTotalAdded(
+		setTotalAdded(
 			brokenPercentages.tenPercent +
 				brokenPercentages.tenPercent +
 				brokenPercentages.thirtyPercent +
 				brokenPercentages.fiftyPercent
 		);
 		setTotalAddedRounded(
-      parseFloat(fixNumberAndFindPercent(total, 2, 50)) +
-      parseFloat(fixNumberAndFindPercent(total, 2, 30)) +
-      parseFloat(fixNumberAndFindPercent(total, 2, 10)) +
-      parseFloat(fixNumberAndFindPercent(total, 2, 10))
+			parseFloat(fixNumberAndFindPercent(total, 2, 50)) +
+				parseFloat(fixNumberAndFindPercent(total, 2, 30)) +
+				parseFloat(fixNumberAndFindPercent(total, 2, 10)) +
+				parseFloat(fixNumberAndFindPercent(total, 2, 10))
 		);
 	}, [total]);
 
-  const handleOnChange = (e) => {
-    setTotal(e.target.value);
-  }
+	const handleOnChange = (e) => {
+		setTotal(e.target.value);
+	};
 
-  const fixNumberAndFindPercent = (number, numberFix, percent) => {
-    percent = percent * .01;
-    return ((number * percent).toFixed(numberFix))
-  }
+	const fixNumberAndFindPercent = (number, numberFix, percent) => {
+		percent = percent * 0.01;
+		return (number * percent).toFixed(numberFix);
+	};
 
-  const doNumbersMatch = () => {
-    return totalAdded === totalAddedRounded ? " text-success" : " text-danger"
-  }
+	const doNumbersMatch = () => {
+		return Math.fround(totalAdded) === Math.fround(totalAddedRounded)
+			? " text-success"
+			: " text-danger";
+	};
 
 	return (
 		<div className="App bg-gradient">
@@ -75,18 +70,24 @@ function App() {
 					<Col>
 						<InputGroup className="my-auto">
 							<InputGroup.Text>$</InputGroup.Text>
-              <input
-                className="form-control"
-                value={total}
-                pattern="[0-9]*"
-                onChange={e => handleOnChange(e)}
-                type="number"
-                placeholder="Dollar amount (with dot and two decimal places)"
-                aria-label="Dollar amount (with dot and two decimal places)" />
+							<input
+								className="form-control"
+								value={total}
+								pattern="[0-9]*"
+								onChange={(e) => handleOnChange(e)}
+								type="number"
+								placeholder="Dollar amount (with dot and two decimal places)"
+								aria-label="Dollar amount (with dot and two decimal places)"
+							/>
 						</InputGroup>
 					</Col>
 				</Row>
-				<Table variant="dark" responsive striped={true} bordered={true} className="my-3">
+				<Table
+					variant="dark"
+					responsive
+					striped={true}
+					bordered={true}
+					className="my-3">
 					<thead>
 						<tr>
 							<th>Percentage Amount</th>
@@ -127,12 +128,25 @@ function App() {
 				</Table>
 			</Container>
 			<Container className={"border-light mb-3 mt-5 pb-5" + doNumbersMatch()}>
-        <h5>Total added together + rounded:{" " + totalAddedRounded}</h5>
-				<h5>Total added together:{" " + totalAdded}</h5>
-        {doNumbersMatch() === " text-success" && totalAdded !== 0
-          && <h4 className="my-5 blink">Numbers match and split evenly</h4>}
-        {doNumbersMatch() === " text-danger"
-          && <h4 className="my-5 blink">Difference:  {(totalAddedRounded - totalAdded).toFixed(6)}</h4>}
+				<h5>
+					Total added together + rounded:
+					{" " + totalAddedRounded.toFixed(2) + " (" + totalAddedRounded + ")"}
+				</h5>
+				<h5>
+					Total added together:
+					{" " + totalAdded.toFixed(2) + " (" + totalAdded + ")"}
+				</h5>
+				{doNumbersMatch() === " text-success" && totalAdded !== 0 && (
+					<h4 className="my-5 blink">Numbers match and split evenly</h4>
+				)}
+			</Container>
+			<Container>
+				{doNumbersMatch() === " text-danger" && (
+					<h4
+						className={"my-5 blink" + posOrNeg(totalAddedRounded - totalAdded)}>
+						Difference: {(totalAddedRounded - totalAdded).toFixed(6)}
+					</h4>
+				)}
 			</Container>
 		</div>
 	);
