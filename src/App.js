@@ -30,14 +30,12 @@ function App() {
     const options = {
     	strings: [
         "Alysa's Calculator",
-        "Numbers coming right up!",
-        "Some amount there, some amount here",
-        "Whoooaa decimals",
-        "Alysa's Calculator",
+        "Alysa's Calculating numbers...",
+        "Alysa's Calculations in progress...",
+        "Alysa's Calculator"
       ],
-      shuffle: true,
       typeSpeed: 50,
-      backSpeed: 50,
+      backSpeed: 80,
       loopCount: 2,
       cursorChar: "",
       backDelay: 30000
