@@ -3,6 +3,8 @@ import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, InputGroup, Table } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalculator } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
 	const [total, setTotal] = useState(0);
@@ -38,6 +40,9 @@ function App() {
 	}, [total]);
 
 	const handleOnChange = (e) => {
+		if (e.target.value.includes(".") && e.target.value.split(".")[1].length > 2) {
+      return;
+		}
 		setTotal(e.target.value);
 	};
 
@@ -52,13 +57,18 @@ function App() {
 			: " text-danger";
 	};
 
+	const posOrNeg = (number) => {
+		return number >= 0 ? " text-danger" : " text-success";
+	};
+
 	return (
 		<div className="App bg-gradient">
 			<header className="App-header">
 				<Container>
 					<Row>
-						<img src={logo} className="App-logo" alt="logo" />
-						<h1>Alysa's Calculator</h1>
+						<h1>
+							<FontAwesomeIcon icon={faCalculator} /> Alysa's Calculator
+						</h1>
 					</Row>
 				</Container>
 			</header>
@@ -76,6 +86,7 @@ function App() {
 								pattern="[0-9]*"
 								onChange={(e) => handleOnChange(e)}
 								type="number"
+								step=".01"
 								placeholder="Dollar amount (with dot and two decimal places)"
 								aria-label="Dollar amount (with dot and two decimal places)"
 							/>
@@ -101,52 +112,98 @@ function App() {
 								<span>10%</span>
 							</td>
 							<td>{fixNumberAndFindPercent(total, 2, 10)}</td>
-							<td>{fixNumberAndFindPercent(total, 6, 10)}</td>
+							<td className="font-monospace d-flex justify-content-end pe-5">
+								{fixNumberAndFindPercent(total, 6, 10)}
+							</td>
 						</tr>
 						<tr>
 							<td>
 								<span>10%</span>
 							</td>
 							<td>{fixNumberAndFindPercent(total, 2, 10)}</td>
-							<td>{fixNumberAndFindPercent(total, 6, 10)}</td>
+							<td className="font-monospace d-flex justify-content-end pe-5">
+								{fixNumberAndFindPercent(total, 6, 10)}
+							</td>
 						</tr>
 						<tr>
 							<td>
 								<span>30%</span>
 							</td>
 							<td>{fixNumberAndFindPercent(total, 2, 30)}</td>
-							<td>{fixNumberAndFindPercent(total, 6, 30)}</td>
+							<td className="font-monospace d-flex justify-content-end pe-5">
+								{fixNumberAndFindPercent(total, 6, 30)}
+							</td>
 						</tr>
 						<tr>
 							<td>
 								<span>50%</span>
 							</td>
 							<td>{fixNumberAndFindPercent(total, 2, 50)}</td>
-							<td>{fixNumberAndFindPercent(total, 6, 50)}</td>
+							<td className="font-monospace d-flex justify-content-end pe-5">
+								{fixNumberAndFindPercent(total, 6, 50)}
+							</td>
 						</tr>
 					</tbody>
 				</Table>
 			</Container>
 			<Container className={"border-light mb-3 mt-5 pb-5" + doNumbersMatch()}>
-				<h5>
-					Total added together + rounded:
-					{" " + totalAddedRounded.toFixed(2) + " (" + totalAddedRounded + ")"}
-				</h5>
-				<h5>
-					Total added together:
-					{" " + totalAdded.toFixed(2) + " (" + totalAdded + ")"}
-				</h5>
+				<Row>
+					<Col sm={4}>Total added together + rounded:</Col>
+					<Col className="d-flex">
+						<h5>
+							{" " +
+								totalAddedRounded.toFixed(2) +
+								" (" +
+								totalAddedRounded +
+								")"}
+						</h5>
+					</Col>
+				</Row>
+				<Row>
+					<Col sm={4}>Total added together:</Col>
+					<Col className="d-flex">
+						<h5>
+							{" " +
+								parseFloat(totalAdded).toFixed(2) +
+								" (" +
+								totalAdded +
+								")"}
+						</h5>
+					</Col>
+				</Row>
 				{doNumbersMatch() === " text-success" && totalAdded !== 0 && (
-					<h4 className="my-5 blink">Numbers match and split evenly</h4>
+					<h2 className="my-5 font-weight-bold blink">
+						Numbers match and split evenly
+					</h2>
 				)}
 			</Container>
 			<Container>
-				{doNumbersMatch() === " text-danger" && (
-					<h4
-						className={"my-5 blink" + posOrNeg(totalAddedRounded - totalAdded)}>
-						Difference: {(totalAddedRounded - totalAdded).toFixed(6)}
-					</h4>
-				)}
+				{doNumbersMatch() === " text-danger" &&
+					(totalAddedRounded - totalAdded).toFixed(2) !== "0.00" && (
+						<div
+							className={
+								"my-5 blink" + posOrNeg(totalAddedRounded - totalAdded)
+							}>
+							<h4>
+								Difference:
+								{" " +
+									(totalAddedRounded - totalAdded).toFixed(2) +
+									" (" +
+									(totalAddedRounded - totalAdded).toFixed(6) +
+									")"}
+							</h4>
+							{totalAddedRounded.toFixed(2) !=
+								parseFloat(totalAdded).toFixed(2) && (
+								<h3>
+									{totalAddedRounded.toFixed(2)} of the{" "}
+									<span className="text-white">
+										{parseFloat(totalAdded).toFixed(2)} original total
+									</span>{" "}
+									was used
+								</h3>
+							)}
+						</div>
+					)}
 			</Container>
 		</div>
 	);

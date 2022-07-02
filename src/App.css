@@ -1,49 +1,62 @@
 .App {
-  text-align: center;
-  background-color: #323337;
-  color: #fff;
-  height: 100vh;
-  transition: all 725ms ease-in-out;
+	text-align: center;
+	background-color: #323337;
+	color: #fff;
+	height: 100vh;
+	transition: all 725ms ease-in-out;
 }
 
 .App-logo {
-  height: 10vmin;
-  pointer-events: none;
+	height: 10vmin;
+	pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+	.App-logo {
+		animation: App-logo-spin infinite 20s linear;
+	}
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 10vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+	background-color: #282c34;
+	min-height: 10vh;
+	display: flex;
+  flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(10px + 2vmin);
+	color: white;
 }
 
 .App-link {
-  color: #61dafb;
+	color: #61dafb;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .blink {
-  -webkit-animation: blink .2s step-end 2;
-          animation: blink .2s step-end 2;
+	-webkit-animation: blink 0.2s step-end 2;
+	animation: blink 0.2s step-end 2;
 }
 
-@-webkit-keyframes blink { 50% { visibility: hidden; }}
-      @keyframes blink { 50% { visibility: hidden; }}
+@-webkit-keyframes blink {
+	50% {
+		visibility: hidden;
+	}
+}
+@keyframes blink {
+	50% {
+		visibility: hidden;
+	}
+}
+
+.font-weight-bold {
+	font-weight: bolder;
+}
