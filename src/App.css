@@ -2,7 +2,6 @@
 	text-align: center;
 	background-color: #323337;
 	color: #fff;
-	height: 100vh;
 	transition: all 725ms ease-in-out;
 }
 
@@ -59,4 +58,7 @@
 
 .font-weight-bold {
 	font-weight: bolder;
+}
+.mb-50vh {
+  margin-bottom: 50vh;
 }

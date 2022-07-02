@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, InputGroup, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalculator } from "@fortawesome/free-solid-svg-icons";
+import tool from "./images/tool.jpg"
+import blurchart from "./images/blurchart.jpg"
+import {
+	ReactCompareSlider,
+	ReactCompareSliderImage
+} from "react-compare-slider";
 
 function App() {
 	const [total, setTotal] = useState(0);
@@ -40,8 +45,11 @@ function App() {
 	}, [total]);
 
 	const handleOnChange = (e) => {
-		if (e.target.value.includes(".") && e.target.value.split(".")[1].length > 2) {
-      return;
+		if (
+			e.target.value.includes(".") &&
+			e.target.value.split(".")[1].length > 2
+		) {
+			return;
 		}
 		setTotal(e.target.value);
 	};
@@ -177,7 +185,7 @@ function App() {
 					</h2>
 				)}
 			</Container>
-			<Container>
+			<Container className="mb-50vh">
 				{doNumbersMatch() === " text-danger" &&
 					(totalAddedRounded - totalAdded).toFixed(2) !== "0.00" && (
 						<div
@@ -204,6 +212,39 @@ function App() {
 							)}
 						</div>
 					)}
+			</Container>
+			<Container className="p-5">
+				<div
+        className="pb-5"
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						flexGrow: 1
+					}}>
+					<ReactCompareSlider
+						boundsPadding={80}
+            changePositionOnHover
+						itemOne={
+							<ReactCompareSliderImage
+								alt="Image one"
+								src={blurchart}
+								style={{ filter: "blur(1rem) grayscale(1)" }}
+                />
+              }
+              itemTwo={
+                <ReactCompareSliderImage
+								alt="Image two"
+								src={blurchart}
+                style={{ filter: "contrast(120%)" }}
+							/>
+						}
+						position={50}
+						style={{
+							flexGrow: 1,
+							width: "100%"
+						}}
+					/>
+				</div>
 			</Container>
 		</div>
 	);
