@@ -189,8 +189,17 @@ function App() {
 					total={total}
 				/>
 			</Container>
-      <NumbersMatch totalAdded={totalAdded} totalAddedRounded={totalAddedRounded} doNumbersMatch={doNumbersMatch} />
-			<NumbersDoNotMatch totalAdded={totalAdded} totalAddedRounded={totalAddedRounded} doNumbersMatch={doNumbersMatch} posOrNeg={posOrNeg} />
+			<NumbersMatch
+				totalAdded={totalAdded}
+				totalAddedRounded={totalAddedRounded}
+				doNumbersMatch={doNumbersMatch}
+			/>
+			<NumbersDoNotMatch
+				totalAdded={totalAdded}
+				totalAddedRounded={totalAddedRounded}
+				doNumbersMatch={doNumbersMatch}
+				posOrNeg={posOrNeg}
+			/>
 			<CompareSlider />
 		</div>
 	);
