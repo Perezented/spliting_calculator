@@ -1,55 +1,73 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Container, Row, Col, InputGroup, Table } from "react-bootstrap";
+import {
+	Container,
+	Row,
+	Col,
+	InputGroup,
+	ToggleButton,
+	Button
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalculator } from "@fortawesome/free-solid-svg-icons";
-import tool from "./images/tool.jpg"
-import blurchart from "./images/blurchart.jpg"
-import {
-	ReactCompareSlider,
-	ReactCompareSliderImage
-} from "react-compare-slider";
+import tool from "./images/tool.jpg";
+
 import Typed from "typed.js";
+import { CompareSlider } from "./components/CompareSlider";
+import { SplitTable } from "./components/SplitTable";
+import { NumbersMatch } from "./components/NumbersMatch";
+import { NumbersDoNotMatch } from "./components/NumbersDoNotMatch";
 
 function App() {
 	const [total, setTotal] = useState(0);
 	const brokenPercentages = {
 		tenPercent: 0,
+		twentyPercent: 0,
 		thirtyPercent: 0,
 		fiftyPercent: 0
 	};
+	const currentDateTime = new Date();
+	const month = currentDateTime.toString().split(" ")[1];
+	const year = currentDateTime.toString().split(" ")[3];
 	const [totalAdded, setTotalAdded] = useState(brokenPercentages);
+	const [split, setSplit] = useState();
 	const [totalAddedRounded, setTotalAddedRounded] = useState(0);
 
-  	// Create reference to store the DOM element containing the animation
+	useEffect(() => {
+		if (month === "Jul" && year === "2022") {
+			setSplit(true);
+		}
+	}, [month, year]);
+
+	// Create reference to store the DOM element containing the animation
 	const el = useRef(null);
-  // Create reference to store the Typed instance itself
+	// Create reference to store the Typed instance itself
 	const typed = useRef(null);
-  useEffect(() => {
-    const options = {
-    	strings: [
-        "Alysa's Calculator",
-        "Alysa's Calculating numbers...",
-        "Alysa's Calculations in progress...",
-        "Alysa's Calculator"
-      ],
-      typeSpeed: 50,
-      backSpeed: 80,
-      loopCount: 2,
-      cursorChar: "",
-      backDelay: 30000
-    };
+	useEffect(() => {
+		const options = {
+			strings: [
+				"Alysa's Calculator",
+				"Alysa's Calculating numbers...",
+				"Alysa's Calculations in progress...",
+				"Alysa's Calculator"
+			],
+			typeSpeed: 50,
+			backSpeed: 80,
+			loopCount: 2,
+			cursorChar: "",
+			backDelay: 30000
+		};
 
-    // elRef refers to the <span> rendered below
-    typed.current = new Typed(el.current, options);
+		// elRef refers to the <span> rendered below
+		typed.current = new Typed(el.current, options);
 
-    return () => {
-      // Make sure to destroy Typed instance during cleanup
-      // to prevent memory leaks
-      typed.current.destroy();
-    }
-  }, [])
+		return () => {
+			// Make sure to destroy Typed instance during cleanup
+			// to prevent memory leaks
+			typed.current.destroy();
+		};
+	}, []);
 
 	useEffect(() => {
 		setTotal(0);
@@ -57,22 +75,36 @@ function App() {
 	}, []);
 
 	useEffect(() => {
-		brokenPercentages.tenPercent = total * 0.1;
 		brokenPercentages.thirtyPercent = total * 0.3;
 		brokenPercentages.fiftyPercent = total * 0.5;
-		setTotalAdded(
-			brokenPercentages.tenPercent +
+		if (split) {
+			brokenPercentages.twentyPercent = total * 0.2;
+			setTotalAdded(
+				brokenPercentages.twentyPercent +
+					brokenPercentages.thirtyPercent +
+					brokenPercentages.fiftyPercent
+			);
+			setTotalAddedRounded(
+				parseFloat(fixNumberAndFindPercent(total, 2, 50)) +
+					parseFloat(fixNumberAndFindPercent(total, 2, 30)) +
+					parseFloat(fixNumberAndFindPercent(total, 2, 20))
+			);
+		} else {
+			brokenPercentages.tenPercent = total * 0.1;
+			setTotalAdded(
 				brokenPercentages.tenPercent +
-				brokenPercentages.thirtyPercent +
-				brokenPercentages.fiftyPercent
-		);
-		setTotalAddedRounded(
-			parseFloat(fixNumberAndFindPercent(total, 2, 50)) +
-				parseFloat(fixNumberAndFindPercent(total, 2, 30)) +
-				parseFloat(fixNumberAndFindPercent(total, 2, 10)) +
-				parseFloat(fixNumberAndFindPercent(total, 2, 10))
-		);
-	}, [total]);
+					brokenPercentages.tenPercent +
+					brokenPercentages.thirtyPercent +
+					brokenPercentages.fiftyPercent
+			);
+			setTotalAddedRounded(
+				parseFloat(fixNumberAndFindPercent(total, 2, 50)) +
+					parseFloat(fixNumberAndFindPercent(total, 2, 30)) +
+					parseFloat(fixNumberAndFindPercent(total, 2, 10)) +
+					parseFloat(fixNumberAndFindPercent(total, 2, 10))
+			);
+		}
+	}, [total, split]);
 
 	const handleOnChange = (e) => {
 		if (
@@ -106,11 +138,30 @@ function App() {
 					<Row>
 						<h1>
 							<FontAwesomeIcon icon={faCalculator} />{" "}
-              <span style={{ whiteSpace: 'pre' }} ref={el} />
+							<span style={{ whiteSpace: "pre" }} ref={el} />
 						</h1>
 					</Row>
 				</Container>
 			</header>
+			<Container>
+				<ToggleButton
+					className="mb-2"
+					id="toggle-check"
+					type="checkbox"
+					variant="primary"
+					checked={split}
+					value="1"
+					onChange={(e) => setSplit(e.currentTarget.checked)}>
+					{split ? "50-30-20 Split" : "50-30-10-10 Split"}
+				</ToggleButton>
+				<Button
+					className="mb-2 no-hover"
+					variant="outline-primary"
+					checked={split}
+					onClick={(e) => setSplit(!split)}>
+					{!split ? "50-30-20 Split" : "50-30-10-10 Split"}
+				</Button>
+			</Container>
 			<Container className="my-3">
 				<Row className="d-flex bg-gradient py-3 border">
 					<Col sm={3} className="my-auto">
@@ -132,151 +183,24 @@ function App() {
 						</InputGroup>
 					</Col>
 				</Row>
-				<Table
-					variant="dark"
-					responsive
-					striped={true}
-					bordered={true}
-					className="my-3">
-					<thead>
-						<tr>
-							<th>Percentage Amount</th>
-							<th>Cleanly Total Divided</th>
-							<th>Total Divided</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>
-								<span>10%</span>
-							</td>
-							<td>{fixNumberAndFindPercent(total, 2, 10)}</td>
-							<td className="font-monospace d-flex justify-content-end pe-5">
-								{fixNumberAndFindPercent(total, 6, 10)}
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span>10%</span>
-							</td>
-							<td>{fixNumberAndFindPercent(total, 2, 10)}</td>
-							<td className="font-monospace d-flex justify-content-end pe-5">
-								{fixNumberAndFindPercent(total, 6, 10)}
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span>30%</span>
-							</td>
-							<td>{fixNumberAndFindPercent(total, 2, 30)}</td>
-							<td className="font-monospace d-flex justify-content-end pe-5">
-								{fixNumberAndFindPercent(total, 6, 30)}
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span>50%</span>
-							</td>
-							<td>{fixNumberAndFindPercent(total, 2, 50)}</td>
-							<td className="font-monospace d-flex justify-content-end pe-5">
-								{fixNumberAndFindPercent(total, 6, 50)}
-							</td>
-						</tr>
-					</tbody>
-				</Table>
+				<SplitTable
+					split={split}
+					fixNumberAndFindPercent={fixNumberAndFindPercent}
+					total={total}
+				/>
 			</Container>
-			<Container className={"border-light mb-3 mt-5 pb-5" + doNumbersMatch()}>
-				<Row>
-					<Col sm={4}>Total added together + rounded:</Col>
-					<Col className="d-flex">
-						<h5>
-							{" " +
-								totalAddedRounded.toFixed(2) +
-								" (" +
-								totalAddedRounded +
-								")"}
-						</h5>
-					</Col>
-				</Row>
-				<Row>
-					<Col sm={4}>Total added together:</Col>
-					<Col className="d-flex">
-						<h5>
-							{" " +
-								parseFloat(totalAdded).toFixed(2) +
-								" (" +
-								totalAdded +
-								")"}
-						</h5>
-					</Col>
-				</Row>
-				{doNumbersMatch() === " text-success" && totalAdded !== 0 && (
-					<h2 className="my-5 font-weight-bold blink">
-						Numbers match and split evenly
-					</h2>
-				)}
-			</Container>
-			<Container className="mb-50vh">
-				{doNumbersMatch() === " text-danger" &&
-					(totalAddedRounded - totalAdded).toFixed(2) !== "0.00" && (
-						<div
-							className={
-								"my-5 blink" + posOrNeg(totalAddedRounded - totalAdded)
-							}>
-							<h4>
-								Difference:
-								{" " +
-									(totalAddedRounded - totalAdded).toFixed(2) +
-									" (" +
-									(totalAddedRounded - totalAdded).toFixed(6) +
-									")"}
-							</h4>
-							{totalAddedRounded.toFixed(2) !=
-								parseFloat(totalAdded).toFixed(2) && (
-								<h3>
-									{totalAddedRounded.toFixed(2)} of the{" "}
-									<span className="text-white">
-										{parseFloat(totalAdded).toFixed(2)} original total
-									</span>{" "}
-									was used
-								</h3>
-							)}
-						</div>
-					)}
-			</Container>
-			<Container className="p-5">
-				<div
-        className="pb-5"
-					style={{
-						display: "flex",
-						flexDirection: "column",
-						flexGrow: 1
-					}}>
-					<ReactCompareSlider
-						boundsPadding={80}
-            changePositionOnHover
-						itemOne={
-							<ReactCompareSliderImage
-								alt="Image one"
-								src={blurchart}
-								style={{ filter: "blur(1rem) grayscale(1)" }}
-                />
-              }
-              itemTwo={
-                <ReactCompareSliderImage
-								alt="Image two"
-								src={blurchart}
-                style={{ filter: "contrast(120%)" }}
-							/>
-						}
-						position={50}
-						style={{
-							flexGrow: 1,
-							width: "100%"
-						}}
-					/>
-				</div>
-			</Container>
+			<NumbersMatch
+				totalAdded={totalAdded}
+				totalAddedRounded={totalAddedRounded}
+				doNumbersMatch={doNumbersMatch}
+			/>
+			<NumbersDoNotMatch
+				totalAdded={totalAdded}
+				totalAddedRounded={totalAddedRounded}
+				doNumbersMatch={doNumbersMatch}
+				posOrNeg={posOrNeg}
+			/>
+			<CompareSlider />
 		</div>
 	);
 }
