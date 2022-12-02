@@ -31,14 +31,8 @@ function App() {
 	const month = currentDateTime.toString().split(" ")[1];
 	const year = currentDateTime.toString().split(" ")[3];
 	const [totalAdded, setTotalAdded] = useState(brokenPercentages);
-	const [split, setSplit] = useState();
+	const [split, setSplit] = useState(true);
 	const [totalAddedRounded, setTotalAddedRounded] = useState(0);
-
-	useEffect(() => {
-		if (month === "Jul" && year === "2022") {
-			setSplit(true);
-		}
-	}, [month, year]);
 
 	// Create reference to store the DOM element containing the animation
 	const el = useRef(null);
@@ -50,7 +44,7 @@ function App() {
 				"Alysa's Calculator",
 				"Alysa's Calculating numbers...",
 				"Alysa's Calculations in progress...",
-				"Alysa's Calculator"
+				"Alysa's Calculator 🔢🧮"
 			],
 			typeSpeed: 50,
 			backSpeed: 80,
@@ -152,14 +146,14 @@ function App() {
 					checked={split}
 					value="1"
 					onChange={(e) => setSplit(e.currentTarget.checked)}>
-					{split ? "50-30-20 Split" : "50-30-10-10 Split"}
+					{split ? "50-40-10 Split" : "50-30-10-10 Split"}
 				</ToggleButton>
 				<Button
 					className="mb-2 no-hover"
 					variant="outline-primary"
 					checked={split}
 					onClick={(e) => setSplit(!split)}>
-					{!split ? "50-30-20 Split" : "50-30-10-10 Split"}
+					{!split ? "50-40-10 Split" : "50-30-10-10 Split"}
 				</Button>
 			</Container>
 			<Container className="my-3">

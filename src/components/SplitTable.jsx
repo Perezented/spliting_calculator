@@ -22,11 +22,20 @@ export const SplitTable = (props) => {
 					<>
 						<tr>
 							<td>
-								<span>20%</span>
+								<span>10%</span>
 							</td>
-							<td>{fixNumberAndFindPercent(total, 2, 20)}</td>
+							<td>{fixNumberAndFindPercent(total, 2, 10)}</td>
 							<td className="font-monospace d-flex justify-content-end pe-5">
-								{fixNumberAndFindPercent(total, 6, 20)}
+								{fixNumberAndFindPercent(total, 6, 10)}
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<span>40%</span>
+							</td>
+							<td>{fixNumberAndFindPercent(total, 2, 40)}</td>
+							<td className="font-monospace d-flex justify-content-end pe-5">
+								{fixNumberAndFindPercent(total, 6, 40)}
 							</td>
 						</tr>
 					</>
@@ -50,17 +59,17 @@ export const SplitTable = (props) => {
 								{fixNumberAndFindPercent(total, 6, 10)}
 							</td>
 						</tr>
+						<tr>
+							<td>
+								<span>30%</span>
+							</td>
+							<td>{fixNumberAndFindPercent(total, 2, 30)}</td>
+							<td className="font-monospace d-flex justify-content-end pe-5">
+								{fixNumberAndFindPercent(total, 6, 30)}
+							</td>
+						</tr>
 					</>
 				)}
-				<tr>
-					<td>
-						<span>30%</span>
-					</td>
-					<td>{fixNumberAndFindPercent(total, 2, 30)}</td>
-					<td className="font-monospace d-flex justify-content-end pe-5">
-						{fixNumberAndFindPercent(total, 6, 30)}
-					</td>
-				</tr>
 				<tr>
 					<td>
 						<span>50%</span>
