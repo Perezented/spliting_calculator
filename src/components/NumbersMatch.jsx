@@ -3,7 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 export const NumbersMatch = (props) => {
 	const { totalAdded, totalAddedRounded, doNumbersMatch } = props;
 
-  return (
+	return (
 		<Container className={"border-light mb-3 mt-5 pb-5" + doNumbersMatch()}>
 			<Row>
 				<Col sm={4}>Total added together + rounded:</Col>

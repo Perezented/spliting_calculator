@@ -7,7 +7,7 @@ import {
 	Col,
 	InputGroup,
 	ToggleButton,
-	Button
+	ButtonGroup
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalculator } from "@fortawesome/free-solid-svg-icons";
@@ -21,19 +21,15 @@ import { NumbersDoNotMatch } from "./components/NumbersDoNotMatch";
 
 function App() {
 	const [total, setTotal] = useState(0);
-	const brokenPercentages = {
-		tenPercent: 0,
-		twentyPercent: 0,
-		thirtyPercent: 0,
-		fiftyPercent: 0
-	};
-	const currentDateTime = new Date();
-	const month = currentDateTime.toString().split(" ")[1];
-	const year = currentDateTime.toString().split(" ")[3];
+	let brokenPercentages = {};
 	const [totalAdded, setTotalAdded] = useState(brokenPercentages);
-	const [split, setSplit] = useState(true);
 	const [totalAddedRounded, setTotalAddedRounded] = useState(0);
-
+	const splits = [
+		{ name: "50-30-20", value: [50, 30, 20] },
+		{ name: "50-40-10", value: [50, 40, 10] },
+		{ name: "50-30-10-10", value: [50, 30, 10, 10] },
+	];
+	const [split, setSplit] = useState(splits[0]);
 	// Create reference to store the DOM element containing the animation
 	const el = useRef(null);
 	// Create reference to store the Typed instance itself
@@ -69,35 +65,17 @@ function App() {
 	}, []);
 
 	useEffect(() => {
-		brokenPercentages.thirtyPercent = total * 0.3;
-		brokenPercentages.fiftyPercent = total * 0.5;
-		if (split) {
-			brokenPercentages.twentyPercent = total * 0.2;
-			setTotalAdded(
-				brokenPercentages.twentyPercent +
-					brokenPercentages.thirtyPercent +
-					brokenPercentages.fiftyPercent
-			);
-			setTotalAddedRounded(
-				parseFloat(fixNumberAndFindPercent(total, 2, 50)) +
-					parseFloat(fixNumberAndFindPercent(total, 2, 30)) +
-					parseFloat(fixNumberAndFindPercent(total, 2, 20))
-			);
-		} else {
-			brokenPercentages.tenPercent = total * 0.1;
-			setTotalAdded(
-				brokenPercentages.tenPercent +
-					brokenPercentages.tenPercent +
-					brokenPercentages.thirtyPercent +
-					brokenPercentages.fiftyPercent
-			);
-			setTotalAddedRounded(
-				parseFloat(fixNumberAndFindPercent(total, 2, 50)) +
-					parseFloat(fixNumberAndFindPercent(total, 2, 30)) +
-					parseFloat(fixNumberAndFindPercent(total, 2, 10)) +
-					parseFloat(fixNumberAndFindPercent(total, 2, 10))
-			);
-		}
+		brokenPercentages = {};
+		let ttlAdded = 0;
+		let ttlAddedRounded = 0;
+		split.value.map(s => {
+			brokenPercentages[s] = total * (s / 100);
+			ttlAdded += total * (s / 100);
+			ttlAddedRounded += parseFloat(fixNumberAndFindPercent(total, 2, s))
+
+		})
+		setTotalAdded(ttlAdded);
+		setTotalAddedRounded(ttlAddedRounded);
 	}, [total, split]);
 
 	const handleOnChange = (e) => {
@@ -138,23 +116,23 @@ function App() {
 				</Container>
 			</header>
 			<Container>
-				<ToggleButton
-					className="mb-2"
-					id="toggle-check"
-					type="checkbox"
-					variant="primary"
-					checked={split}
-					value="1"
-					onChange={(e) => setSplit(e.currentTarget.checked)}>
-					{split ? "50-40-10 Split" : "50-30-10-10 Split"}
-				</ToggleButton>
-				<Button
-					className="mb-2 no-hover"
-					variant="outline-primary"
-					checked={split}
-					onClick={(e) => setSplit(!split)}>
-					{!split ? "50-40-10 Split" : "50-30-10-10 Split"}
-				</Button>
+				<ButtonGroup className="my-2">
+					{splits.map((sp, idx) => (
+						<ToggleButton
+							key={idx}
+							id={`split-${idx}`}
+							type="split"
+							className={split.name !== sp.name && 'fw-bold'}
+							variant={split.name === sp.name ? 'primary' : 'outline-primary'}
+							name="split"
+							value={sp.value}
+							checked={split.name === sp.name}
+							onClick={() => { setSplit(sp) }}
+						>
+							{sp.name}
+						</ToggleButton>
+					))}
+				</ButtonGroup>
 			</Container>
 			<Container className="my-3">
 				<Row className="d-flex bg-gradient py-3 border">
