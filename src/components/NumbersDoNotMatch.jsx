@@ -1,4 +1,4 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
 export const NumbersDoNotMatch = (props) => {
 	const { totalAdded, totalAddedRounded, doNumbersMatch, posOrNeg } = props;
