@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Split Calculator",
+  "name": "Alysa's Splitting Calculator",
+  "description": "Modern bill splitting calculator with customizable ratios",
   "icons": [
     {
       "src": "favicon.ico",

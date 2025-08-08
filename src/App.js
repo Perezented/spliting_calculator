@@ -7,26 +7,48 @@ import {
   Col,
   InputGroup,
   ToggleButton,
-  ButtonGroup
+  ButtonGroup,
+  Button
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalculator } from "@fortawesome/free-solid-svg-icons";
+import { faCalculator, faCog } from "@fortawesome/free-solid-svg-icons";
 
 import Typed from "typed.js";
 import { CompareSlider } from "./components/CompareSlider";
 import { SplitTable } from "./components/SplitTable";
 import { NumbersMatch } from "./components/NumbersMatch";
 import { NumbersDoNotMatch } from "./components/NumbersDoNotMatch";
+import { SplitManager } from "./components/SplitManager";
 
 function App() {
 	const [total, setTotal] = useState(0);
-	let brokenPercentages = {};
-	const [totalAdded, setTotalAdded] = useState(brokenPercentages);
+	const [totalAdded, setTotalAdded] = useState(0);
 	const [totalAddedRounded, setTotalAddedRounded] = useState(0);
-	const splits = [
-		{ name: "50-50", value: [50, 50] },
-		{ name: "50-40-10", value: [50, 40, 10] }
+	const [showSplitManager, setShowSplitManager] = useState(false);
+
+	// Default splits (these will be saved to localStorage and become editable)
+	const defaultSplits = [
+		{ name: "50-50", value: [50, 50], isCustom: true },
+		{ name: "50-40-10", value: [50, 40, 10], isCustom: true }
 	];
+
+	// Load splits from localStorage or use defaults
+	const loadSplitsFromStorage = () => {
+		try {
+			const saved = localStorage.getItem('splittingCalculatorSplits');
+			if (saved) {
+				const parsed = JSON.parse(saved);
+				// Ensure all splits are marked as custom/editable
+				return parsed.map(split => ({ ...split, isCustom: true }));
+			}
+		} catch (error) {
+			console.error('Error loading splits from localStorage:', error);
+		}
+		// Return defaults on first load
+		return defaultSplits;
+	};
+
+	const [splits, setSplits] = useState(loadSplitsFromStorage);
 	const [split, setSplit] = useState(splits[0]);
 	// Create reference to store the DOM element containing the animation
 	const el = useRef(null);
@@ -93,22 +115,38 @@ function App() {
 
 	useEffect(() => {
 		setTotal(0);
-		setTotalAdded(brokenPercentages);
+		setTotalAdded(0);
 	}, []);
 
 	useEffect(() => {
-		brokenPercentages = {};
 		let ttlAdded = 0;
 		let ttlAddedRounded = 0;
-		split.value.map(s => {
-			brokenPercentages[s] = total * (s / 100);
+		split.value.forEach(s => {
 			ttlAdded += total * (s / 100);
-			ttlAddedRounded += parseFloat(fixNumberAndFindPercent(total, 2, s))
-
-		})
+			ttlAddedRounded += parseFloat(fixNumberAndFindPercent(total, 2, s).replace(/[$,]/g, ''));
+		});
 		setTotalAdded(ttlAdded);
 		setTotalAddedRounded(ttlAddedRounded);
 	}, [total, split]);
+
+	// Save splits to localStorage whenever they change
+	useEffect(() => {
+		try {
+			localStorage.setItem('splittingCalculatorSplits', JSON.stringify(splits));
+		} catch (error) {
+			console.error('Error saving splits to localStorage:', error);
+		}
+	}, [splits]);
+
+	// Handle updating splits from the manager
+	const handleSplitsUpdate = (newSplits) => {
+		setSplits(newSplits);
+		// If current split was deleted, switch to first available split
+		const currentSplitExists = newSplits.some(s => s.name === split.name);
+		if (!currentSplitExists && newSplits.length > 0) {
+			setSplit(newSplits[0]);
+		}
+	};
 
 	const handleOnChange = (e) => {
 		if (
@@ -152,23 +190,32 @@ function App() {
 				</Container>
 			</header>
 			<Container>
-				<ButtonGroup className="my-2">
-					{splits.map((sp, idx) => (
-						<ToggleButton
-							key={idx}
-							id={`split-${idx}`}
-							type="split"
-							className={split.name !== sp.name && 'fw-bold'}
-							variant={split.name === sp.name ? 'primary' : 'outline-primary'}
-							name="split"
-							value={sp.value}
-							checked={split.name === sp.name}
-							onClick={() => { setSplit(sp) }}
-						>
-							{sp.name}
-						</ToggleButton>
-					))}
-				</ButtonGroup>
+				<div className="d-flex justify-content-between align-items-center my-2">
+					<ButtonGroup>
+						{splits.map((sp, idx) => (
+							<ToggleButton
+								key={idx}
+								id={`split-${idx}`}
+								type="split"
+								className={split.name !== sp.name && 'fw-bold'}
+								variant={split.name === sp.name ? 'info' : 'outline-info'}
+								name="split"
+								value={sp.value}
+								checked={split.name === sp.name}
+								onClick={() => { setSplit(sp) }}
+							>
+								{sp.name}
+							</ToggleButton>
+						))}
+					</ButtonGroup>
+					<Button
+						variant="secondary fw-bold"
+						onClick={() => setShowSplitManager(true)}
+						title="Manage Split Ratios"
+					>
+						<FontAwesomeIcon icon={faCog} /> Manage Split Ratios
+					</Button>
+				</div>
 			</Container>
 			<Container className="my-3">
 				<Row className="d-flex bg-gradient py-3 border">
@@ -209,6 +256,14 @@ function App() {
 				posOrNeg={posOrNeg}
 			/>
 			<CompareSlider />
+
+			{/* Split Manager Modal */}
+			<SplitManager
+				splits={splits}
+				onSplitsUpdate={handleSplitsUpdate}
+				show={showSplitManager}
+				onHide={() => setShowSplitManager(false)}
+			/>
 		</div>
 	);
 }
