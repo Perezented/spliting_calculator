@@ -142,10 +142,14 @@ export const SplitManager = ({ splits, onSplitsUpdate, show, onHide }) => {
   };
 
   const handleReset = () => {
-    setEditingSplits([...splits]);
-    setNewSplitName('');
-    setNewSplitValues('');
-    setError('');
+    if (window.confirm('Are you sure you want to reset all split ratios to default? (50-50 & 50-40-10) This action cannot be undone.')) {
+      localStorage.removeItem('splittingCalculatorSplits');
+      setEditingSplits([...splits]);
+      setNewSplitName('');
+      setNewSplitValues('');
+      setError('');
+      window.location.reload();
+    }
   };
 
   const newSplitValidation = getNewSplitValidation();
@@ -304,11 +308,14 @@ export const SplitManager = ({ splits, onSplitsUpdate, show, onHide }) => {
           </Form.Text>
         </Form.Group>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="d-flex justify-content-between">
+        <Button variant="outline-danger" onClick={handleReset}>
+          Reset
+        </Button>
+
         <Button variant="secondary" onClick={onHide}>
           Cancel
         </Button>
-        {/* Save Changes button removed */}
       </Modal.Footer>
     </Modal>
   );

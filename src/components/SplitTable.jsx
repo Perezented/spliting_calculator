@@ -18,7 +18,7 @@ export const SplitTable = (props) => {
 				</tr>
 			</thead>
 			<tbody>
-				{split.value.map(sp => {
+				{split?.value?.map(sp => {
 					return <tr>
 						<td>
 							<span>{sp + "%"}</span>

@@ -121,7 +121,7 @@ function App() {
 	useEffect(() => {
 		let ttlAdded = 0;
 		let ttlAddedRounded = 0;
-		split.value.forEach(s => {
+		split?.value?.forEach(s => {
 			ttlAdded += total * (s / 100);
 			ttlAddedRounded += parseFloat(fixNumberAndFindPercent(total, 2, s).replace(/[$,]/g, ''));
 		});
