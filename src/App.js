@@ -2,16 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
-	Container,
-	Row,
-	Col,
-	InputGroup,
-	ToggleButton,
-	ButtonGroup
+  Container,
+  Row,
+  Col,
+  InputGroup,
+  ToggleButton,
+  ButtonGroup
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalculator } from "@fortawesome/free-solid-svg-icons";
-import tool from "./images/tool.jpg";
 
 import Typed from "typed.js";
 import { CompareSlider } from "./components/CompareSlider";
@@ -25,9 +24,8 @@ function App() {
 	const [totalAdded, setTotalAdded] = useState(brokenPercentages);
 	const [totalAddedRounded, setTotalAddedRounded] = useState(0);
 	const splits = [
-		{ name: "50-30-20", value: [50, 30, 20] },
-		{ name: "50-40-10", value: [50, 40, 10] },
-		{ name: "50-30-10-10", value: [50, 30, 10, 10] },
+		{ name: "50-50", value: [50, 50] },
+		{ name: "50-40-10", value: [50, 40, 10] }
 	];
 	const [split, setSplit] = useState(splits[0]);
 	// Create reference to store the DOM element containing the animation
@@ -35,19 +33,53 @@ function App() {
 	// Create reference to store the Typed instance itself
 	const typed = useRef(null);
 	useEffect(() => {
-		const options = {
-			strings: [
-				"Alysa's Calculator",
-				"Alysa's Calculating numbers...",
-				"Alysa's Calculations in progress...",
-				"Alysa's Calculator 🔢🧮"
-			],
-			typeSpeed: 50,
-			backSpeed: 80,
-			loopCount: 2,
-			cursorChar: "",
-			backDelay: 30000
-		};
+    const allStrings = [
+      "Alysa's Calculator",
+      "Alysa helps you split bills fast.",
+      "Choose your split ratio.",
+      "Alysa makes splitting easy!",
+      "Alysa's Calculations in progress...",
+      "Let's crunch those numbers!",
+      "Alysa's Calculating numbers...",
+      "Enter your total and split!",
+      "Alysa's Calculations in progress...",
+      "Alysa's Calculator: always accurate.",
+      "Alysa's Calculator: fairness first.",
+      "Alysa's Calculator: teamwork made simple.",
+      "Alysa's magic for your bills.",
+      "Alysa's math, your peace of mind.",
+      "Alysa's numbers, your solution.",
+      "Alysa's tool for perfect splits.",
+      "Alysa's way to fair splits.",
+      "Fast, accurate calculations.",
+      "Alysa's Calculator: the smart way to split.",
+      "Alysa's Calculator: trusted by friends.",
+      "Alysa's Calculator: your bill buddy.",
+      "Get your results instantly.",
+      "Precision with every calculation.",
+      "Alysa's Calculations in progress...",
+      "Simple. Reliable. Alysa's Calculator.",
+      "Alysa's Calculator: split, save, smile.",
+      "Alysa's Calculator: split with confidence.",
+      "Splitting bills made easy!",
+      "Try different split options!",
+      "Your bill, your way.",
+      "Alysa's Calculator 🔢🧮",
+    ];
+    // Shuffle the strings array
+    const shuffledStrings = allStrings
+      .map(str => ({ str, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ str }) => str);
+
+    const options = {
+      strings: shuffledStrings,
+      typeSpeed: 50,
+      backSpeed: 80,
+      cursorChar: "",
+      backDelay: 30000,
+      loop: true,
+    };
 
 		// elRef refers to the <span> rendered below
 		typed.current = new Typed(el.current, options);
@@ -90,7 +122,11 @@ function App() {
 
 	const fixNumberAndFindPercent = (number, numberFix, percent) => {
 		percent = percent * 0.01;
-		return (number * percent).toFixed(numberFix);
+    const result = number * percent;
+    if (numberFix === 2) {
+      return result.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    }
+    return result.toFixed(numberFix);
 	};
 
 	const doNumbersMatch = () => {
